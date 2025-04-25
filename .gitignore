@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+
+# Database
+*.db
+*.sqlite3
+
+# Environment variables
+.env
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Edge WebDriver
+msedgedriver.exe
+
+# Log files
+*.log
+
+# Local development settings
+instance/
