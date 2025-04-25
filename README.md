@@ -8,12 +8,12 @@
 - 用戶登入/登出
 - 儀表板頁面
 - 自動化測試套件
-- SQLite 資料庫存儲
+- MySQL 資料庫存儲
 
 ## 技術棧
 
 - **後端框架**: Flask
-- **資料庫**: SQLite
+- **資料庫**: MySQL
 - **測試工具**: Selenium
 - **瀏覽器**: Microsoft Edge
 - **安全性**: Session 管理
@@ -22,7 +22,7 @@
 
 ## 安裝依賴
 ```bash
-pip install flask selenium
+pip install flask selenium flask-mysqldb
 ```
 
 ## 訪問網站
@@ -47,8 +47,4 @@ python test_login.py
 
 1. 確保已安裝 Microsoft Edge 瀏覽器
 2. WebDriver 版本需要與 Edge 瀏覽器版本相符
-3. 首次運行會自動創建 SQLite 資料庫
-
-
-
-
+3. 確保已創建 MySQL 資料庫並配置正確的連接資訊

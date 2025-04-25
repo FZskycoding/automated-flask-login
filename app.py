@@ -1,24 +1,23 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask_mysqldb import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
-import sqlite3
+from dotenv import load_dotenv
+from config import Config
+import os
+
+# 載入環境變數
+load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = "your_secret_key"
 
-DATABASE = "users.db"
+# 載入基本配置
+app.config.from_object(Config)
 
-# 初始化 SQLite 資料庫
-def init_db():
-    with sqlite3.connect(DATABASE) as conn:
-        cursor = conn.cursor()
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                email TEXT UNIQUE NOT NULL,
-                password TEXT NOT NULL
-            )
-        """)
-        conn.commit()
+# 從環境變數載入敏感配置
+app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+
+mysql = MySQL(app)
 
 @app.route("/")
 def index():
@@ -31,18 +30,22 @@ def register():
         email = request.form["email"]
         password = request.form["password"]
 
-        with sqlite3.connect(DATABASE) as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
-            existing_user = cursor.fetchone()
+        cur = mysql.connection.cursor()
+        
+        # 檢查是否已存在相同 email
+        cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+        existing_user = cur.fetchone()
 
-            if existing_user:
-                flash("此 Email 已被註冊", "danger")
-            else:
-                cursor.execute("INSERT INTO users (email, password) VALUES (?, ?)", (email, password))
-                conn.commit()
-                flash("註冊成功，請登入", "success")
-                return redirect(url_for("login"))
+        if existing_user:
+            flash("此 Email 已被註冊", "danger")
+        else:
+            cur.execute("INSERT INTO users (email, password) VALUES (%s, %s)", (email, password))
+            mysql.connection.commit()
+            cur.close()
+            flash("註冊成功，請登入", "success")
+            return redirect(url_for("login"))
+        
+        cur.close()
 
     return render_template("register.html")
 
@@ -53,21 +56,20 @@ def login():
         email = request.form["email"]
         password = request.form["password"]
 
-        with sqlite3.connect(DATABASE) as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM users WHERE email = ? AND password = ?", (email, password))
-            user = cursor.fetchone()
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM users WHERE email = %s AND password = %s", (email, password))
+        user = cur.fetchone()
+        cur.close()
 
-            if user:
-                session["user"] = email
-          
-                return redirect(url_for("dashboard"))
-            else:
-                flash("Email 或密碼錯誤", "danger")
+        if user:
+            session["user"] = email
+            return redirect(url_for("dashboard"))
+        else:
+            flash("Email 或密碼錯誤", "danger")
 
     return render_template("login.html")
 
-#登入成功畫面
+# 登入成功畫面
 @app.route("/dashboard")
 def dashboard():
     if "user" not in session:
@@ -76,11 +78,10 @@ def dashboard():
     
     return render_template("dashboard.html", user=session["user"])
 
-#登出
+# 登出
 @app.route("/logout")
 def logout():
     session.pop("user", None)
-   
     return redirect(url_for("index"))
 
 if __name__ == "__main__":
