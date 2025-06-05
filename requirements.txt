@@ -1,0 +1,5 @@
+python-dotenv
+Flask
+flask-mysqldb
+python-dotenv
+Werkzeug

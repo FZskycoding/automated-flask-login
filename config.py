@@ -6,5 +6,5 @@ class Config:
     MYSQL_CURSORCLASS = 'DictCursor'
     
     # 從環境變數加載敏感資訊
-    MYSQL_PASSWORD = None  # 將從 .env 加載
-    SECRET_KEY = None      # 將從 .env 加載
+    MYSQL_PASSWORD = None  
+    SECRET_KEY = None      
