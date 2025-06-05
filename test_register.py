@@ -4,8 +4,8 @@ from selenium.webdriver.common.keys import Keys
 import time
 
 # 設定 WebDriver
-driver = webdriver.Edge()  # 如果你用 Chrome, 可以改為 webdriver.Chrome()
-driver.get("http://127.0.0.1:5000/register")  # 你的 Flask 註冊頁面
+driver = webdriver.Edge()  
+driver.get("http://127.0.0.1:5000/register")  # Flask 註冊頁面
 
 # 等待網頁加載
 time.sleep(2)

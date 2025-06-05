@@ -13,11 +13,11 @@ try:
     
     # 輸入 Email
     email_input = driver.find_element(By.NAME, "email")
-    email_input.send_keys("test@example.com")  # 替換為你的測試 Email
+    email_input.send_keys("test@example.com")  # 測試 Email
     
     # 輸入密碼
     password_input = driver.find_element(By.NAME, "password")
-    password_input.send_keys("Test1234")  # 替換為你的測試密碼
+    password_input.send_keys("Test1234")  # 測試密碼
 
     # 按下登入按鈕
     login_button = driver.find_element(By.TAG_NAME, "button")
